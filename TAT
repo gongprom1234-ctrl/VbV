@@ -1,0 +1,67 @@
+-- โหลด Rayfield UI Library
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- สร้างหน้าต่าง GUI
+local Window = Rayfield:CreateWindow({
+   Name = "🥚 สคริปต์ขโมยไข่ | Egg Stealer",
+   LoadingTitle = "กำลังโหลดสคริปต์...",
+   LoadingSubtitle = "โดย AI Assistant",
+   ConfigurationSaving = {
+      Enabled = false,
+   },
+   Discord = {
+      Enabled = false
+   },
+   KeySystem = false
+})
+
+-- สร้างแท็บหลัก
+local MainTab = Window:CreateTab("ฟังก์ชันหลัก 🚀", 4483362458)
+
+------------------------------------------------------------------
+-- ตัวแปรเก็บค่าต่าง ๆ
+------------------------------------------------------------------
+local AutoFarmRareEggs = false
+local FlySpeed = 50
+local WalkSpeedValue = 16
+
+------------------------------------------------------------------
+-- ฟังก์ชันที่ 1: บินไปเก็บไข่แรร์อัตโนมัติ (Auto Collect Rare Eggs)
+------------------------------------------------------------------
+MainTab:CreateSection("🥚 ระบบเก็บไข่อัตโนมัติ")
+
+local ToggleEgg = MainTab:CreateToggle({
+   Name = "บินเก็บไข่ระดับแรร์อัตโนมัติ (Auto Rare Eggs)",
+   CurrentValue = false,
+   Flag = "AutoEgg",
+   Callback = function(Value)
+      AutoFarmRareEggs = Value
+      if AutoFarmRareEggs then
+         task.spawn(function()
+            while AutoFarmRareEggs do
+               task.wait(0.5)
+               pcall(function()
+                  -- ค้นหาโฟลเดอร์หรือวัตถุไข่ใน Workspace
+                  local eggsFolder = workspace:FindFirstChild("Eggs") or workspace:FindFirstChild("EggFolder") or workspace
+                  
+                  for _, egg in pairs(eggsFolder:GetChildren()) do
+                     if not AutoFarmRareEggs then break end
+                     
+                     -- ตรวจสอบระดับความแรร์ (Rare, Epic, Legendary, Mythic, Secret)
+                     local eggName = string.lower(egg.Name)
+                     if eggName:find("rare") or eggName:find("epic") or eggName:find("legendary") or eggName:find("mythic") or eggName:find("secret") then
+                        
+                        -- วาร์ป/บินไปที่ตำแหน่งไข่
+                        local player = game.Players.LocalPlayer
+                        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                           local targetCFrame = egg:GetPivot() or egg.CFrame
+                           player.Character.HumanoidRootPart.CFrame = targetCFrame * CFrame.new(0, 3, 0)
+                           task.wait(0.3)
+                        end
+                     end
+                  end
+               end)
+            end
+         end)
+      end
+
